@@ -1,5 +1,10 @@
 package com.example.demo;
 
+import java.util.List;
+
+import com.example.demo.entitis.TestData;
+import com.example.demo.mapper.TestMapper;
+
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,12 +16,16 @@ import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 
+import junit.framework.TestCase;
+
 @RunWith(SpringRunner.class)
 @SpringBootTest
 @AutoConfigureMockMvc
 public class DemoApplicationTests {
 	@Autowired
-    private MockMvc mvc;
+	private MockMvc mvc;
+	@Autowired
+    private TestMapper userMapper;
 	@Test
 	public void contextLoads() throws Exception {
 		ResultActions result1 = mvc.perform(MockMvcRequestBuilders.get("/"));
@@ -26,5 +35,12 @@ public class DemoApplicationTests {
 		.andExpect(MockMvcResultMatchers.content().string(result2.andReturn().getResponse().getContentAsString()))
 		.andExpect(MockMvcResultMatchers.content().string(result3.andReturn().getResponse().getContentAsString()));
 	}
-
+	@Test
+	public void mybatisTest() throws Exception{
+		List<TestData> list = userMapper.getAll();
+		TestCase.assertEquals(list.get(0).getData(), userMapper.getById(1).getData());
+		TestCase.assertNotNull(list.get(0).getData());
+		TestCase.assertEquals(list.get(1).getData(), userMapper.getById(2).getData());
+		TestCase.assertNotNull(list.get(1).getData());
+	}
 }
