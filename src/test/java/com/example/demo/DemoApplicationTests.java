@@ -1,5 +1,8 @@
 package com.example.demo;
 
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONObject;
+
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -10,6 +13,8 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
+
+import junit.framework.TestCase;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest
@@ -25,6 +30,14 @@ public class DemoApplicationTests {
 		result1.andExpect(MockMvcResultMatchers.status().isOk())
 		.andExpect(MockMvcResultMatchers.content().string(result2.andReturn().getResponse().getContentAsString()))
 		.andExpect(MockMvcResultMatchers.content().string(result3.andReturn().getResponse().getContentAsString()));
+	}
+	@Test
+	public void testJSON() throws Exception{
+		ResultActions result = mvc.perform(MockMvcRequestBuilders.get("/testJSON"));
+		String string = result.andExpect(MockMvcResultMatchers.status().isOk())
+		.andReturn().getResponse().getContentAsString();
+		JSONObject json = JSON.parseObject(string);
+		TestCase.assertEquals(json.getString("key"),"value");
 	}
 
 }
