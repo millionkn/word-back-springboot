@@ -6,6 +6,7 @@ import java.util.List;
 
 import com.example.demo.entitis.TestData;
 import com.example.demo.mapper.TestMapper;
+import com.example.demo.shiro.ShiroMapper;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -27,7 +28,9 @@ public class DemoApplicationTests {
 	@Autowired
 	private MockMvc mvc;
 	@Autowired
-    private TestMapper userMapper;
+	private TestMapper userMapper;
+	@Autowired
+	ShiroMapper shiroMapper;
 	@Test
 	public void contextLoads() throws Exception {
 		ResultActions result1 = mvc.perform(MockMvcRequestBuilders.get("/"));

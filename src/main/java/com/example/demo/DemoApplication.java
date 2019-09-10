@@ -2,17 +2,23 @@ package com.example.demo;
 
 import java.util.List;
 
+import com.alibaba.fastjson.JSONObject;
 import com.alibaba.fastjson.serializer.SerializerFeature;
 import com.alibaba.fastjson.support.config.FastJsonConfig;
 import com.alibaba.fastjson.support.spring.FastJsonHttpMessageConverter;
 
 import org.mybatis.spring.annotation.MapperScan;
+import org.apache.shiro.authz.UnauthenticatedException;
+import org.apache.shiro.authz.UnauthorizedException;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.converter.HttpMessageConverter;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.servlet.NoHandlerFoundException;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
@@ -22,12 +28,28 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 @ControllerAdvice
 public class DemoApplication implements WebMvcConfigurer{
 
-	public static void main(String[] args) {
+    public static void main(String[] args) {
 		SpringApplication.run(DemoApplication.class, args);
 	}
 	@ExceptionHandler(NoHandlerFoundException.class)
 	public String notFound(){
 		return "/";
+    }
+    @ExceptionHandler(UnauthenticatedException.class)
+    @ResponseBody
+    @ResponseStatus(code=HttpStatus.UNAUTHORIZED)
+	public JSONObject notLogin(){
+        JSONObject json = new JSONObject();
+        json.put("err", "尚未登录");
+		return json;
+    }
+    @ExceptionHandler(UnauthorizedException.class)
+    @ResponseBody
+    @ResponseStatus(code=HttpStatus.FORBIDDEN)
+	public JSONObject permissionDenied(){
+        JSONObject json = new JSONObject();
+        json.put("err", "权限不足");
+		return json;
 	}
 	@Override
     public void configureMessageConverters(List<HttpMessageConverter<?>> converters) {
