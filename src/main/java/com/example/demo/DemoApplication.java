@@ -20,6 +20,7 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.servlet.NoHandlerFoundException;
+import org.springframework.web.servlet.config.annotation.CorsRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 @SpringBootApplication
@@ -30,7 +31,13 @@ public class DemoApplication implements WebMvcConfigurer{
 
     public static void main(String[] args) {
 		SpringApplication.run(DemoApplication.class, args);
-	}
+    }
+    @Override
+    public void addCorsMappings(CorsRegistry registry) {
+        registry.addMapping("/**").allowedOrigins("*")
+                .allowedMethods("GET", "HEAD", "POST","PUT", "DELETE", "OPTIONS")
+                .allowCredentials(false).maxAge(3600);
+    }
 	@ExceptionHandler(NoHandlerFoundException.class)
 	public String notFound(){
 		return "/";
