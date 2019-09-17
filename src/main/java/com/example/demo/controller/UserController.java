@@ -1,6 +1,8 @@
 package com.example.demo.controller;
 
+import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
+import com.example.demo.mapper.UserMapper;
 
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.authc.AuthenticationException;
@@ -8,13 +10,19 @@ import org.apache.shiro.authc.IncorrectCredentialsException;
 import org.apache.shiro.authc.LockedAccountException;
 import org.apache.shiro.authc.UnknownAccountException;
 import org.apache.shiro.authc.UsernamePasswordToken;
+import org.apache.shiro.authz.annotation.RequiresUser;
 import org.apache.shiro.subject.Subject;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.GetMapping;
+
 
 @RestController
-public class LoginController{
+public class UserController{
+    @Autowired
+    UserMapper userMapper;
     @PostMapping("/login")
     public JSONObject login(@RequestBody JSONObject requestJSON){
         JSONObject json = new JSONObject();
@@ -44,4 +52,11 @@ public class LoginController{
         Subject currentUser = SecurityUtils.getSubject();
         currentUser.logout();
     }
+    @RequiresUser
+    @GetMapping(value="/currentUser")
+    public JSONObject currentUser() {
+        Subject currentUser = SecurityUtils.getSubject();
+        return (JSONObject)JSON.toJSON(userMapper.getById((Integer)currentUser.getPrincipal()));
+    }
+    
 }
