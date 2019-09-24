@@ -6,13 +6,13 @@ CREATE TABLE `component` (
   `uploader` int(11) NOT NULL,
   `info` json NOT NULL,
   `words` json NOT NULL,
-  `url` varchar(256) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL,
+  `fileName` varchar(256) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8;
 
-insert into `component`(`id`,`uploader`,`info`,`words`,`url`) values
-(1,1,'{"name": "写出汉语"}','[1, 2, 3]','/static/components/1.js'),
-(2,1,'{"name": "写出英文"}','[1, 2]','/static/components/2.js');
+insert into `component`(`id`,`uploader`,`info`,`words`,`fileName`) values
+(1,1,'{"name": "写出汉语"}','[1, 2, 3]','1.js'),
+(2,1,'{"name": "写出英文"}','[1, 2]','2.js');
 DROP TABLE IF EXISTS  `lesson`;
 CREATE TABLE `lesson` (
   `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
@@ -32,11 +32,11 @@ CREATE TABLE `lesson_subscriber` (
   `userId` int(11) unsigned NOT NULL,
   `lessonId` int(11) unsigned NOT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=6 DEFAULT CHARSET=utf8;
 
 insert into `lesson_subscriber`(`id`,`userId`,`lessonId`) values
-(2,1,2),
-(3,1,1);
+(4,1,2),
+(5,1,1);
 DROP TABLE IF EXISTS  `role`;
 CREATE TABLE `role` (
   `id` int(11) unsigned NOT NULL AUTO_INCREMENT,

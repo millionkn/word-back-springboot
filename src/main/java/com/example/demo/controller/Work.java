@@ -71,10 +71,14 @@ public class Work {
     }
 
     @GetMapping(value = "/component/{id}")
-    public Component getComponentById(@PathVariable("id") String id) {
+    public JSONObject getComponentById(@PathVariable("id") String id) {
         if ("default".equals(id)) {
             id = "1";
         }
-        return workMapper.getComponentById(id);
+        Component c = workMapper.getComponentById(id);
+        JSONObject json = JSONObject.parseObject(JSON.toJSONString(c));
+        json.put("url", "/components/" + json.getString("fileName"));
+        json.remove("fileName");
+        return json;
     }
 }
