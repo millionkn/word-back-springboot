@@ -72,7 +72,7 @@ public class LoginTests {
 
 	@Test
 	public void sha256hashTest() {
-		String password = new Sha256Hash("password", shiroMapper.getSalt(1)).toString();
-		TestCase.assertEquals(shiroMapper.getPassword(1), password);
+		String password = new Sha256Hash("password", shiroMapper.getSalt("1")).toString();
+		TestCase.assertEquals(shiroMapper.getPassword("1"), password);
 	}
 }

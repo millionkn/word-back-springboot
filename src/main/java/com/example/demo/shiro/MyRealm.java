@@ -23,18 +23,19 @@ public class MyRealm extends AuthorizingRealm {
     @Autowired
     private ShiroMapper mapper;
     {
-        //设置用于匹配密码的CredentialsMatcher
+        // 设置用于匹配密码的CredentialsMatcher
         HashedCredentialsMatcher hashMatcher = new HashedCredentialsMatcher();
         hashMatcher.setHashAlgorithmName(Sha256Hash.ALGORITHM_NAME);
         hashMatcher.setStoredCredentialsHexEncoded(true);
         this.setCredentialsMatcher(hashMatcher);
     }
+
     @Override
     protected AuthorizationInfo doGetAuthorizationInfo(PrincipalCollection principals) {
         if (principals == null) {
             throw new AuthorizationException("PrincipalCollection method argument cannot be null.");
         }
-        Integer id = (Integer) getAvailablePrincipal(principals);
+        String id = (String) getAvailablePrincipal(principals);
         SimpleAuthorizationInfo info = new SimpleAuthorizationInfo();
         info.setRoles(new HashSet<String>(mapper.findRoles(id)));
         return info;
@@ -47,9 +48,11 @@ public class MyRealm extends AuthorizingRealm {
         if (username == null) {
             throw new AccountException("Null usernames are not allowed by this realm.");
         }
-        Integer id = mapper.getIdByUsername(token.getUsername());
-        if(null == id){throw new UnknownAccountException();}
-        SimpleAuthenticationInfo info = new SimpleAuthenticationInfo(id, mapper.getPassword(id),getName());
+        String id = mapper.getIdByUsername(token.getUsername());
+        if (null == id) {
+            throw new UnknownAccountException();
+        }
+        SimpleAuthenticationInfo info = new SimpleAuthenticationInfo(id, mapper.getPassword(id), getName());
         String salt = mapper.getSalt(id);
         if (salt != null) {
             info.setCredentialsSalt(ByteSource.Util.bytes(salt));
