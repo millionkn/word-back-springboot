@@ -11,5 +11,4 @@ public class Component {
     String uploader;
     JSONObject info;
     JSONArray words;
-    String fileName;
 }

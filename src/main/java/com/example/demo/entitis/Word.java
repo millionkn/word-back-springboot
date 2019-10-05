@@ -8,4 +8,5 @@ import lombok.Data;
 public class Word {
     String id;
     JSONObject data;
+    String describe;
 }

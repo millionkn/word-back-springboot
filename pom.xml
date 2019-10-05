@@ -65,6 +65,16 @@
 			<artifactId>shiro-spring-boot-web-starter</artifactId>
 			<version>1.4.1</version>
 		</dependency>
+		<dependency>
+			<groupId>net.jodah</groupId>
+			<artifactId>expiringmap</artifactId>
+			<version>0.5.9</version>
+		</dependency>
+		<dependency>
+			<groupId>com.google.guava</groupId>
+			<artifactId>guava</artifactId>
+			<version>28.0-jre</version>
+		</dependency>
 	</dependencies>
 
 	<build>
