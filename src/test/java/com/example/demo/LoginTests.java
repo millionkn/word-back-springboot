@@ -26,53 +26,53 @@ import junit.framework.TestCase;
 @SpringBootTest
 @AutoConfigureMockMvc
 public class LoginTests {
-	@Autowired
-	private MockMvc mvc;
-	@Autowired
-	ShiroMapper shiroMapper;
-	private MockHttpSession session;
+  @Autowired
+  private MockMvc mvc;
+  @Autowired
+  ShiroMapper shiroMapper;
+  private MockHttpSession session;
 
-	@Before
-	public void onBefore() throws Exception {
-		session = new MockHttpSession();
-		mvc.perform(MockMvcRequestBuilders.get("/loginTest/users").session(session))
-				.andExpect(MockMvcResultMatchers.status().isUnauthorized());
+  @Before
+  public void onBefore() throws Exception {
+    session = new MockHttpSession();
+    mvc.perform(MockMvcRequestBuilders.get("/loginTest/users").session(session))
+        .andExpect(MockMvcResultMatchers.status().isUnauthorized());
 
-		JSONObject requestJSON = new JSONObject();
-		requestJSON.put("username", "测试账号");
-		requestJSON.put("password", "password");
-		MockHttpServletRequestBuilder builder = MockMvcRequestBuilders.post("/login")
-				.contentType(MediaType.APPLICATION_JSON).content(requestJSON.toJSONString()).session(session);
-		mvc.perform(builder).andExpect(MockMvcResultMatchers.status().isOk());
-		mvc.perform(MockMvcRequestBuilders.get("/loginTest/users").session(session))
-				.andExpect(MockMvcResultMatchers.status().isOk());
-	}
+    JSONObject requestJSON = new JSONObject();
+    requestJSON.put("username", "测试账号");
+    requestJSON.put("password", "password");
+    MockHttpServletRequestBuilder builder = MockMvcRequestBuilders.post("/login")
+        .contentType(MediaType.APPLICATION_JSON).content(requestJSON.toJSONString()).session(session);
+    mvc.perform(builder).andExpect(MockMvcResultMatchers.status().isOk());
+    mvc.perform(MockMvcRequestBuilders.get("/loginTest/users").session(session))
+        .andExpect(MockMvcResultMatchers.status().isOk());
+  }
 
-	@After
-	public void onAfter() throws Exception {
-		mvc.perform(MockMvcRequestBuilders.get("/loginTest/users").session(session))
-				.andExpect(MockMvcResultMatchers.status().isOk());
-		mvc.perform(MockMvcRequestBuilders.post("/logout").session(session))
-				.andExpect(MockMvcResultMatchers.status().isOk());
-		mvc.perform(MockMvcRequestBuilders.get("/loginTest/users").session(session))
-				.andExpect(MockMvcResultMatchers.status().isUnauthorized());
-	}
+  @After
+  public void onAfter() throws Exception {
+    mvc.perform(MockMvcRequestBuilders.get("/loginTest/users").session(session))
+        .andExpect(MockMvcResultMatchers.status().isOk());
+    mvc.perform(MockMvcRequestBuilders.post("/logout").session(session))
+        .andExpect(MockMvcResultMatchers.status().isOk());
+    mvc.perform(MockMvcRequestBuilders.get("/loginTest/users").session(session))
+        .andExpect(MockMvcResultMatchers.status().isUnauthorized());
+  }
 
-	@Test
-	public void testRoles() throws Exception {
-		mvc.perform(MockMvcRequestBuilders.get("/loginTest/roles").session(session))
-				.andExpect(MockMvcResultMatchers.status().isOk());
-	}
+  @Test
+  public void testRoles() throws Exception {
+    mvc.perform(MockMvcRequestBuilders.get("/loginTest/roles").session(session))
+        .andExpect(MockMvcResultMatchers.status().isOk());
+  }
 
-	@Test
-	public void testWithOutRoles() throws Exception {
-		mvc.perform(MockMvcRequestBuilders.get("/loginTest/noroles").session(session))
-				.andExpect(MockMvcResultMatchers.status().isForbidden());
-	}
+  @Test
+  public void testWithOutRoles() throws Exception {
+    mvc.perform(MockMvcRequestBuilders.get("/loginTest/noroles").session(session))
+        .andExpect(MockMvcResultMatchers.status().isForbidden());
+  }
 
-	@Test
-	public void sha256hashTest() {
-		String password = new Sha256Hash("password", shiroMapper.getSalt("1")).toString();
-		TestCase.assertEquals(shiroMapper.getPassword("1"), password);
-	}
+  @Test
+  public void sha256hashTest() {
+    String password = new Sha256Hash("password", shiroMapper.getSalt("1")).toString();
+    TestCase.assertEquals(shiroMapper.getPassword("1"), password);
+  }
 }

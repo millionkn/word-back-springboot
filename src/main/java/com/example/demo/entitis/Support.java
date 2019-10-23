@@ -3,7 +3,8 @@ package com.example.demo.entitis;
 import lombok.Data;
 
 @Data
-public class User {
+public class Support {
   String id;
-  String username;
+  String componentId;
+  String wordId;
 }

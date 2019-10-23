@@ -25,35 +25,38 @@ import junit.framework.TestCase;
 @SpringBootTest
 @AutoConfigureMockMvc
 public class DemoApplicationTests {
-	@Autowired
-	private MockMvc mvc;
-	@Autowired
-	private TestMapper userMapper;
-	@Autowired
-	ShiroMapper shiroMapper;
-	@Test
-	public void contextLoads() throws Exception {
-		ResultActions result1 = mvc.perform(MockMvcRequestBuilders.get("/"));
-		ResultActions result2 = mvc.perform(MockMvcRequestBuilders.get("/aaa"));
-		ResultActions result3 = mvc.perform(MockMvcRequestBuilders.get("/bbb"));
-		result1.andExpect(MockMvcResultMatchers.status().isOk())
-		.andExpect(MockMvcResultMatchers.content().string(result2.andReturn().getResponse().getContentAsString()))
-		.andExpect(MockMvcResultMatchers.content().string(result3.andReturn().getResponse().getContentAsString()));
-	}
-	@Test
-	public void testJSON() throws Exception{
-		ResultActions result = mvc.perform(MockMvcRequestBuilders.get("/testJSON"));
-		String string = result.andExpect(MockMvcResultMatchers.status().isOk())
-		.andReturn().getResponse().getContentAsString();
-		JSONObject json = JSON.parseObject(string);
-		TestCase.assertEquals(json.getString("key"),"value");
-	}
-	@Test
-	public void mybatisTest() throws Exception{
-		List<TestData> list = userMapper.getAll();
-		TestCase.assertEquals(list.get(0).getData(), userMapper.getById(1).getData());
-		TestCase.assertNotNull(list.get(0).getData());
-		TestCase.assertEquals(list.get(1).getData(), userMapper.getById(2).getData());
-		TestCase.assertNotNull(list.get(1).getData());
-	}
+  @Autowired
+  private MockMvc mvc;
+  @Autowired
+  private TestMapper userMapper;
+  @Autowired
+  ShiroMapper shiroMapper;
+
+  @Test
+  public void contextLoads() throws Exception {
+    ResultActions result1 = mvc.perform(MockMvcRequestBuilders.get("/"));
+    ResultActions result2 = mvc.perform(MockMvcRequestBuilders.get("/aaa"));
+    ResultActions result3 = mvc.perform(MockMvcRequestBuilders.get("/bbb"));
+    result1.andExpect(MockMvcResultMatchers.status().isOk())
+        .andExpect(MockMvcResultMatchers.content().string(result2.andReturn().getResponse().getContentAsString()))
+        .andExpect(MockMvcResultMatchers.content().string(result3.andReturn().getResponse().getContentAsString()));
+  }
+
+  @Test
+  public void testJSON() throws Exception {
+    ResultActions result = mvc.perform(MockMvcRequestBuilders.get("/testJSON"));
+    String string = result.andExpect(MockMvcResultMatchers.status().isOk()).andReturn().getResponse()
+        .getContentAsString();
+    JSONObject json = JSON.parseObject(string);
+    TestCase.assertEquals(json.getString("key"), "value");
+  }
+
+  @Test
+  public void mybatisTest() throws Exception {
+    List<TestData> list = userMapper.getAll();
+    TestCase.assertEquals(list.get(0).getData(), userMapper.getById(1).getData());
+    TestCase.assertNotNull(list.get(0).getData());
+    TestCase.assertEquals(list.get(1).getData(), userMapper.getById(2).getData());
+    TestCase.assertNotNull(list.get(1).getData());
+  }
 }

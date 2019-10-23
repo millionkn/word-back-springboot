@@ -6,7 +6,7 @@ import lombok.Data;
 
 @Data
 public class Word {
-    String id;
-    JSONObject data;
-    String describe;
+  String id;
+  JSONObject data;
+  String describe;
 }
