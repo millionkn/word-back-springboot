@@ -19,4 +19,14 @@ public class SupportController {
   List<Support> getSupportByLessonId(@PathVariable String id) {
     return workMapper.getSupportByLessonId(id);
   }
+
+  @GetMapping("/support/word/{id}")
+  List<Support> getSupportByWordId(@PathVariable String id) {
+    return workMapper.getSupportByWordId(id);
+  }
+
+  @GetMapping("/support/component/{id}")
+  List<Support> getSupportByComponentId(@PathVariable String id) {
+    return workMapper.getSupportByComponentId(id);
+  }
 }

@@ -101,4 +101,14 @@ public class ComponentController {
     }
     return ret;
   }
+
+  @GetMapping("/component/word/{id}")
+  public List<Component> getComponentByWord(@PathVariable String id) {
+    return workMapper.getComponentByWord(id);
+  }
+
+  @GetMapping(value = "/component/search/{name}")
+  public List<Component> searchComponent(@PathVariable String name) {
+    return workMapper.searchComponentByName(name);
+  }
 }

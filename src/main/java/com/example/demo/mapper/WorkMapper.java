@@ -81,8 +81,24 @@ public interface WorkMapper {
       @Result(column = "word_id", property = "wordId") })
   List<Support> getSupportByLessonId(String lessonId);
 
+  @Select("SELECT * from `support` where `word_id`=#{wordId}")
+  @Results({ @Result(column = "component_id", property = "componentId"),
+      @Result(column = "word_id", property = "wordId") })
+  List<Support> getSupportByWordId(String wordId);
+
+  @Select("SELECT * from `support` where `component_id`=#{componentId}")
+  @Results({ @Result(column = "component_id", property = "componentId"),
+      @Result(column = "word_id", property = "wordId") })
+  List<Support> getSupportByComponentId(String componentId);
+
+  @Select("select `component`.* from `component` left join `support` on `component`.id = `support`.component_id"
+      + "where `support`.word_id=#{wordId}")
+  List<Component> getComponentByWord(String wordId);
+
+  @Select("select * from `component` where info->'$.name' like concat(concat('%',#{name}),'%')")
+  List<Component> searchComponentByName(String name);
+
   @Select("<script> select * from `word` where id in "
-      + "<foreach item='item' index='index' collection='list' open='(' separator=',' close=')'>#{item}</foreach>"
-      + "</script> ")
+      + "(null<foreach item='item' index='index' collection='list'>,#{item}</foreach>)" + "</script> ")
   List<Word> wordCollection(List<String> wordIdList);
 }
