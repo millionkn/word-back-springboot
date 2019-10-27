@@ -57,7 +57,7 @@ public class LessonController {
   @DeleteMapping(value = "/lesson/{id}")
   public void deleteCurrentUserLesson(@PathVariable String id) {
     String userId = (String) SecurityUtils.getSubject().getPrincipal();
-    if (workMapper.getLessonById(id).getOwner() == userId) {
+    if (workMapper.getLessonById(id).getOwner().equals(userId)) {
       workMapper.deleteLesson(id);
     }
   }
