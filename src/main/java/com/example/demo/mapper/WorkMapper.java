@@ -38,6 +38,12 @@ public interface WorkMapper {
       + "</if>" + "</script>")
   void setLessonData(String lessonId, List<String> supportIdList);
 
+  @Update("update `lesson` set `showing`=#{publiced} where `id`=#{lessonId} ")
+  void setLessonPubliced(String lessonId, Boolean publiced);
+
+  @Update("update  `lesson` set `info`=#{info} where `id`=#{lessonId}")
+  void setLessonInfo(String lessonId, JSONObject info);
+
   @Select("select * from component where id=#{id}")
   Component getComponentById(String id);
 

@@ -13,7 +13,9 @@ import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
@@ -59,6 +61,17 @@ public class LessonController {
     String userId = (String) SecurityUtils.getSubject().getPrincipal();
     if (workMapper.getLessonById(id).getOwner().equals(userId)) {
       workMapper.deleteLesson(id);
+    }
+  }
+
+  @PutMapping(value = "/lesson/{id}")
+  public void updateLesson(@PathVariable String id, @RequestBody JSONObject body) {
+    String userId = (String) SecurityUtils.getSubject().getPrincipal();
+    if (workMapper.getLessonById(id).getOwner().equals(userId)) {
+
+      workMapper.setLessonInfo(id, body.getJSONObject("info"));
+      workMapper.setLessonData(id, body.getJSONArray("support").toJavaList(String.class));
+      workMapper.setLessonPubliced(id, body.getBoolean("showing"));
     }
   }
 }
