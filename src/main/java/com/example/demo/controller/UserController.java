@@ -12,11 +12,12 @@ import org.apache.shiro.authc.UnknownAccountException;
 import org.apache.shiro.authc.UsernamePasswordToken;
 import org.apache.shiro.authz.annotation.RequiresUser;
 import org.apache.shiro.subject.Subject;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
-import org.springframework.beans.factory.annotation.Autowired;
 
 @RestController
 public class UserController {
@@ -61,5 +62,12 @@ public class UserController {
   public User currentUser() {
     String id = (String) SecurityUtils.getSubject().getPrincipal();
     return userMapper.getById(id);
+  }
+
+  @GetMapping(value = "/isLogined")
+  public JSONObject isLogined() {
+    JSONObject ret = new JSONObject();
+    ret.put("isLogined", null != SecurityUtils.getSubject().getPrincipal());
+    return ret;
   }
 }
