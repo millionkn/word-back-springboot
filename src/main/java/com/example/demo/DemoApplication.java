@@ -73,6 +73,15 @@ public class DemoApplication implements WebMvcConfigurer {
     return json;
   }
 
+  @ExceptionHandler(JSONErrorMessage.class)
+  @ResponseBody
+  @ResponseStatus(code = HttpStatus.BAD_REQUEST)
+  public JSONObject error(JSONErrorMessage th) {
+    JSONObject json = new JSONObject();
+    json.put("err", th.getMessage());
+    return json;
+  }
+
   @ExceptionHandler(UnauthorizedException.class)
   @ResponseBody
   @ResponseStatus(code = HttpStatus.FORBIDDEN)

@@ -1,6 +1,6 @@
 package com.example.demo.mapper;
 
-import java.sql.Blob;
+import java.io.InputStream;
 import java.util.List;
 
 import com.alibaba.fastjson.JSONObject;
@@ -50,7 +50,7 @@ public interface WorkMapper {
   @Select("SELECT `word`.* from `word` LEFT JOIN `support` on `support`.`word_id`= `word`.`id` where `support`.component_id=#{componentId}")
   List<Word> getComponentSupportWord(String componentId);
 
-  @Insert("insert into `component` values (null,#{uploader},#{info},'')")
+  @Insert("insert into `component` values (null,#{uploader},#{info},0)")
   @Options(useGeneratedKeys = true, keyProperty = "id")
   void createComponent(Component component);
 
@@ -60,14 +60,20 @@ public interface WorkMapper {
   @Select("select * from word where `describe` like concat(concat('%',#{describe}),'%')")
   List<Word> searchWordByDescribe(String describe);
 
-  @Select("select file from component where id=#{id}")
-  Blob readComponentFileById(String id);
-
   @Delete("delete from `component` where `id`=#{id};")
   void deleteComponent(String id);
 
-  @Update("update `component` set `file`=#{blob} where `id`=#{id}")
-  void updataComponentFile(String id, Blob blob);
+  @Update("update `component` set `fileCode`=#{fileCode} where `id`=#{id}")
+  void setComponentFileCode(String id, String fileCode);
+
+  @Select("select `fileCode` from `component` where `id`=#{id}")
+  String getComponentFileCode(String id);
+
+  @Select("select `blob` from `blob_data` where id=#{id}")
+  InputStream getBinary(String id);
+
+  @Select("insert into `blob_data` values (null,#{inputStream});select LAST_INSERT_ID()")
+  String setBinary(InputStream inputStream);
 
   @Update("update `component` set `info`=#{json} where `id`=#{id}")
   void setComponentInfo(String id, JSONObject json);

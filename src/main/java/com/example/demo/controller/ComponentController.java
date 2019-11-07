@@ -4,6 +4,7 @@ import java.util.List;
 
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
+import com.example.demo.JSONErrorMessage;
 import com.example.demo.entitis.Component;
 import com.example.demo.mapper.WorkMapper;
 
@@ -16,35 +17,26 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
-
-import net.jodah.expiringmap.ExpiringMap;
 
 @RestController
 public class ComponentController {
   @Autowired
   WorkMapper workMapper;
-  @Autowired
-  ExpiringMap<String, byte[]> expiringMap;
 
   @RequiresUser
   @PostMapping("/component")
-  public JSONObject createComponent(@RequestBody JSONObject json, @RequestParam("code") String fileCode) {
-    JSONObject ret = new JSONObject();
-    byte[] temp = expiringMap.get(fileCode);
-    if (null == temp) {
-      ret.put("err", "code值无效或已过期");
-    } else {
-      Component component = new Component();
-      component.setInfo(json.getJSONObject("info"));
-      component.setUploader((String) SecurityUtils.getSubject().getPrincipal());
-      workMapper.createComponent(component);
-      String componentId = component.getId();
-      workMapper.updataComponentFile(componentId, new com.mysql.cj.jdbc.Blob(temp, null));
-      workMapper.setComponentSupportWord(componentId, json.getJSONArray("word").toJavaList(String.class));
-    }
-    return ret;
+  public void createComponent(@RequestBody JSONObject body) {
+    JSONObject info = body.getJSONObject("info");
+    List<String> word = body.getJSONArray("word").toJavaList(String.class);
+    String fileCode = body.getString("fileCode");
+    Component component = new Component();
+    component.setInfo(info);
+    component.setUploader((String) SecurityUtils.getSubject().getPrincipal());
+    workMapper.createComponent(component);
+    String componentId = component.getId();
+    workMapper.setComponentSupportWord(componentId, word);
+    workMapper.setComponentFileCode(componentId, fileCode);
   }
 
   @GetMapping(value = "/component/{id}")
@@ -71,35 +63,24 @@ public class ComponentController {
   }
 
   @RequiresUser
-  @PutMapping(value = "/component/{componentId}")
-  public JSONObject updateComponent(@PathVariable("componentId") String componentId,
-      @RequestParam(value = "code", required = false) String code, @RequestBody(required = false) JSONObject json) {
-
+  @PutMapping(value = "/component/{id}")
+  public void updateComponentInfo(@PathVariable("id") String id, @RequestBody JSONObject body) throws JSONErrorMessage {
     String userId = (String) SecurityUtils.getSubject().getPrincipal();
-    JSONObject ret = new JSONObject();
-    if (!workMapper.getComponentById(componentId).getUploader().equals(userId)) {
-      ret.put("err", "权限不足");
-    } else {
-      if (code != null) {
-        byte[] temp = expiringMap.get(code);
-        if (null == temp) {
-          ret.put("err", "code值无效或已过期");
-        } else {
-          workMapper.updataComponentFile(componentId, new com.mysql.cj.jdbc.Blob(temp, null));
-        }
-      }
-      if (json != null) {
-        JSONObject info = json.getJSONObject("info");
-        if (info != null) {
-          workMapper.setComponentInfo(componentId, info);
-        }
-        JSONArray words = json.getJSONArray("word");
-        if (words != null) {
-          workMapper.setComponentSupportWord(componentId, words.toJavaList(String.class));
-        }
-      }
+    if (!workMapper.getComponentById(id).getUploader().equals(userId)) {
+      throw new JSONErrorMessage("权限不足");
     }
-    return ret;
+    JSONObject info = body.getJSONObject("info");
+    if (null != info) {
+      workMapper.setComponentInfo(id, info);
+    }
+    JSONArray wordIdList = body.getJSONArray("word");
+    if (wordIdList != null) {
+      workMapper.setComponentSupportWord(id, wordIdList.toJavaList(String.class));
+    }
+    String fileCode = body.getString("fileCode");
+    if (fileCode != null) {
+      workMapper.setComponentFileCode(id, fileCode);
+    }
   }
 
   @GetMapping("/component/word/{id}")
